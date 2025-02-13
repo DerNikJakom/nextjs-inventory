@@ -1,6 +1,7 @@
 import { Box, Typography, Card, CardContent, CardActions } from "@mui/material";
 import MenuButtons from "@/components/MenuButtons";
 
+// TODO: [name] dynamisch durch den Namen des Benutzers ersetzen
 export default function HomePage() {
   return (
     <Box
@@ -20,10 +21,10 @@ export default function HomePage() {
         }}
       >
         <CardContent sx={{ textAlign: "center" }}>
-          <Typography variant="h2" color="primary" gutterBottom>
+          <Typography variant="h2" color="text.primary" gutterBottom>
             Hallo [name]!
           </Typography>
-          <Typography variant="h5" color="secondary">
+          <Typography variant="h5" color="text.secondary">
             Was möchtest du tun?
           </Typography>
         </CardContent>
