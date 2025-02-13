@@ -2,11 +2,9 @@
 
 import React from "react";
 import { Stack, Button } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 
 export default function MenuButtons() {
-  const theme = useTheme(); // theme laden
   const router = useRouter();
 
   return (
@@ -15,8 +13,8 @@ export default function MenuButtons() {
         id="deviceInfoBtn"
         variant="contained"
         sx={{
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
+          backgroundColor: "background.paper",
+          color: "text.primary",
         }}
         onClick={() => router.push("/device")}
       >
@@ -26,8 +24,8 @@ export default function MenuButtons() {
         id="inventoryBtn"
         variant="contained"
         sx={{
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
+          backgroundColor: "background.paper",
+          color: "text.primary",
         }}
         onClick={() => router.push("/inventory")}
       >
@@ -36,7 +34,7 @@ export default function MenuButtons() {
       <Button
         id="logOutBtn"
         variant="contained"
-        sx={{ backgroundColor: theme.palette.primary.main }}
+        sx={{ backgroundColor: "primary.main" }}
       >
         Ausloggen
       </Button>
