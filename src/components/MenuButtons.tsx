@@ -5,7 +5,7 @@ import { Stack, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
 
-export default function MenuButtons(props) {
+export default function MenuButtons() {
   const theme = useTheme(); // theme laden
   const router = useRouter();
 
