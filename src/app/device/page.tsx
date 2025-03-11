@@ -10,11 +10,8 @@ import {
   Button,
   Box,
   TextField,
+  Typography,
 } from "@mui/material";
-
-/* // TODO //
-- DB-Abfrage mit prisma
-*/
 
 export default function DeviceInformation() {
   const router = useRouter();
@@ -25,6 +22,16 @@ export default function DeviceInformation() {
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setInput(event.target.value);
+      if (event.target.value === "") {
+        setError(null);
+      }
+    },
+    []
+  );
+
+  const handleFocus = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      event.target.select();
     },
     []
   );
@@ -103,11 +110,17 @@ export default function DeviceInformation() {
               required
               autoFocus
               onChange={handleChange}
+              onFocus={handleFocus}
               value={input}
               id="hex-input"
               label="Inventarcode"
               sx={{ color: "primary.main" }}
             />
+            {error && (
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            )}
           </Box>
         </CardContent>
         <CardActions
