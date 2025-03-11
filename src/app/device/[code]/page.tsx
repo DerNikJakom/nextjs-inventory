@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, use } from "react";
 import {
   Card,
   CardHeader,
@@ -15,10 +15,6 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/navigation";
-
-interface Props {
-  params: { code: string };
-}
 
 const ExpandMore = styled(
   (props: {
@@ -41,31 +37,48 @@ const ExpandMore = styled(
   }),
 }));
 
-const DeviceDetailPage = ({ params }: Props) => {
+const DeviceDetailPage = ({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) => {
   const router = useRouter();
+  const { code } = use(params);
 
   const [expanded, setExpanded] = useState(false);
+  const [device, setDevice] = useState({
+    mitarbeiterID: 0,
+    vorname: "",
+    nachname: "",
+    name: "",
+    hersteller: "",
+    modell: "",
+    produktnummer: "",
+    seriennummer: "",
+    code: "",
+    geraetetyp: "",
+    anschaffungsdatum: "",
+    anschaffungskosten: "",
+    standort: "",
+    bemerkungen: "",
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/device/${code}`);
+        const data = await response.json();
+        setDevice(data);
+      } catch (error) {
+        console.error("Fehler bei der Überprüfung des Geräts");
+      }
+    };
+    fetchData();
+  }, [code]);
 
   const handleExpandClick = useCallback(() => {
     setExpanded(!expanded);
   }, [expanded]);
-
-  // Beispielhafte Gerätedaten
-  const device = {
-    hersteller: "Beispielhersteller",
-    modell: "Beispielmodell",
-    geraetetyp: "Laptop",
-    standort: "Büro 101",
-    bemerkungen: "Keine",
-    name: "Beispielgerät",
-    produktnummer: "123456",
-    seriennummer: "ABCDEF123456",
-    anschaffungsdatum: "2022-01-01",
-    anschaffungskosten: 1000,
-    vorname: "Max",
-    nachname: "Mustermann",
-    mitarbeiter_id: 1,
-  };
 
   const isAssigned = true; // Beispielhaftes Zuweisungsstatus
   const userID = 1; // Beispielhafte Benutzer-ID
