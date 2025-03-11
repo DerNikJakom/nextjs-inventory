@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -21,16 +21,19 @@ import {
 export default function DeviceInformation() {
   const router = useRouter();
 
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState<string>("");
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
-  };
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setInput(event.target.value);
+    },
+    []
+  );
 
-  const isHexCode = (code: string) => {
+  const isHexCode = useMemo(() => {
     const regex = /^[0-9A-F]{6}$/i;
-    return regex.test(code);
-  };
+    return (code: string) => regex.test(code);
+  }, []);
 
   return (
     <Box
@@ -103,8 +106,9 @@ export default function DeviceInformation() {
           <Button
             id="submit-code"
             variant="contained"
-            sx={{ backgroundColor: "primary.main" }}
-            onClick={() => router.push("/device/123")}
+            sx={{ backgroundColor: "primary.main", ml: 2 }}
+            onClick={() => router.push(`/device/${input}`)}
+            disabled={!isHexCode(input)}
           >
             Bestätigen
           </Button>
