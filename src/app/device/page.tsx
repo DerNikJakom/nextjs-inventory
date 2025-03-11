@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -10,7 +10,6 @@ import {
   Button,
   Box,
   TextField,
-  Typography,
 } from "@mui/material";
 
 /* // TODO //
@@ -34,59 +33,83 @@ export default function DeviceInformation() {
   };
 
   return (
-    <Card sx={{ borderRadius: 3, backgroundColor: "#F2F7F8", width: 600 }}>
-      <CardHeader
-        title="Gerätecode eingeben"
-        subheader="6-stelliger Inventarcode"
-      />
-      <CardContent>
-        <Box
-          component="form"
-          sx={{
-            "& .MuiTextField-root": { m: 1, width: "25ch" },
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            error={!isHexCode(input) && input.length > 0}
-            helperText={
-              !isHexCode(input) && input.length > 0 && "kein gültiger Code"
-            }
-            required
-            autoFocus
-            onChange={handleChange}
-            value={input}
-            id="hex-input"
-            label="Inventarcode"
-            sx={{ color: "primary.main" }}
-          />
-        </Box>
-      </CardContent>
-      <CardActions
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Card
         sx={{
-          alignSelf: "stretch",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
+          borderRadius: 3,
+          backgroundColor: "#F2F7F8",
+          width: 600,
         }}
       >
-        <Button
-          variant="outlined"
-          sx={{ color: "primary.main" }}
-          onClick={() => router.push("/")}
+        <CardHeader
+          title="Gerätecode eingeben"
+          subheader="6-stelliger Inventarcode"
+          sx={{
+            textAlign: "center",
+            color: "primary.main",
+          }}
+        />
+        <CardContent
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Zurück
-        </Button>
-        <Button
-          id="submit-code"
-          variant="contained"
-          sx={{ backgroundColor: "primary.main" }}
-          onClick={() => router.push("/device/123")}
+          <Box
+            component="form"
+            sx={{
+              "& .MuiTextField-root": { m: 1, width: "25ch" },
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              error={!isHexCode(input) && input.length > 0}
+              helperText={
+                !isHexCode(input) && input.length > 0 && "kein gültiger Code"
+              }
+              required
+              autoFocus
+              onChange={handleChange}
+              value={input}
+              id="hex-input"
+              label="Inventarcode"
+              sx={{ color: "primary.main" }}
+            />
+          </Box>
+        </CardContent>
+        <CardActions
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Bestätigen
-        </Button>
-      </CardActions>
-    </Card>
+          <Button
+            variant="outlined"
+            sx={{ color: "primary.main" }}
+            onClick={() => router.push("/")}
+          >
+            Zurück
+          </Button>
+          <Button
+            id="submit-code"
+            variant="contained"
+            sx={{ backgroundColor: "primary.main" }}
+            onClick={() => router.push("/device/123")}
+          >
+            Bestätigen
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
   );
 }
