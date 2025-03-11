@@ -156,7 +156,11 @@ const DeviceDetailPage = ({ params }: Props) => {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography sx={{ textAlign: "left" }} variant="body2">
+            <Typography
+              component="div"
+              sx={{ textAlign: "left" }}
+              variant="body2"
+            >
               <ul>
                 <li>
                   <b>Typ:</b> {device.geraetetyp}
