@@ -20,6 +20,7 @@ export default function DeviceInformation() {
   const router = useRouter();
 
   const [input, setInput] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +35,24 @@ export default function DeviceInformation() {
   }, []);
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (isHexCode(input)) {
-        router.push(`/device/${input}`);
+        try {
+          const response = await fetch(`/api/device/${input.toUpperCase()}`);
+
+          const data = await response.json();
+
+          if (!data.error) {
+            router.push(`/device/${input}`);
+          } else {
+            setError("Gerät nicht gefunden");
+          }
+        } catch (error) {
+          setError("Fehler bei der Überprüfung des Geräts");
+        }
+      } else {
+        setError("Ungültiger Code");
       }
     },
     [input, isHexCode, router]
@@ -109,15 +124,22 @@ export default function DeviceInformation() {
           >
             Zurück
           </Button>
-          <Button
-            id="submit-code"
-            variant="contained"
-            sx={{ backgroundColor: "primary.main", ml: 2 }}
-            onClick={() => router.push(`/device/${input}`)}
-            disabled={!isHexCode(input)}
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onSubmit={handleSubmit}
           >
-            Bestätigen
-          </Button>
+            <Button
+              id="submit-code"
+              variant="contained"
+              sx={{ backgroundColor: "primary.main", ml: 2 }}
+              type="submit"
+              disabled={!isHexCode(input)}
+            >
+              Bestätigen
+            </Button>
+          </Box>
         </CardActions>
       </Card>
     </Box>
