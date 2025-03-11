@@ -14,8 +14,6 @@ import {
 
 /* // TODO //
 - DB-Abfrage mit prisma
-- Card zentrieren
-- Bestätigen mit code Umleitung auf /device/[code]
 */
 
 export default function DeviceInformation() {
@@ -34,6 +32,16 @@ export default function DeviceInformation() {
     const regex = /^[0-9A-F]{6}$/i;
     return (code: string) => regex.test(code);
   }, []);
+
+  const handleSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (isHexCode(input)) {
+        router.push(`/device/${input}`);
+      }
+    },
+    [input, isHexCode, router]
+  );
 
   return (
     <Box
@@ -68,11 +76,9 @@ export default function DeviceInformation() {
         >
           <Box
             component="form"
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
-            }}
             noValidate
             autoComplete="off"
+            onSubmit={handleSubmit}
           >
             <TextField
               error={!isHexCode(input) && input.length > 0}
