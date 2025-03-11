@@ -18,7 +18,7 @@ export default function MenuButtons() {
         }}
         onClick={() => router.push("/device")}
       >
-        Geräteinformation einsehen
+        Geräteinformationen
       </Button>
       <Button
         id="inventoryBtn"
@@ -29,7 +29,18 @@ export default function MenuButtons() {
         }}
         onClick={() => router.push("/inventory")}
       >
-        Inventar verwalten
+        Mein Inventar
+      </Button>
+      <Button
+        id="fullInventoryBtn"
+        variant="contained"
+        sx={{
+          backgroundColor: "background.paper",
+          color: "text.primary",
+        }}
+        onClick={() => router.push("/inventory/full")}
+      >
+        Komplettes Inventar
       </Button>
       <Button
         id="logOutBtn"
