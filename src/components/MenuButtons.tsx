@@ -3,12 +3,13 @@
 import React from "react";
 import { Stack, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import Box from "next-auth/providers/box";
 
 export default function MenuButtons() {
   const router = useRouter();
 
   return (
-    <Stack direction="column" gap={1}>
+    <Stack direction="column" gap={1} sx={{ padding: 2, width: "75%" }}>
       <Button
         id="deviceInfoBtn"
         variant="contained"
