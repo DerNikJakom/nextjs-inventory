@@ -101,7 +101,7 @@ const DeviceDetailPage = ({
         sx={{
           borderRadius: 3,
           backgroundColor: "#F2F7F8",
-          width: 600,
+          width: 400,
           textAlign: "center", // Inhalte der Karte zentrieren
         }}
       >
