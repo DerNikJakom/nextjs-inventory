@@ -7,21 +7,44 @@ export async function GET(
   request: Request,
   { params }: { params: { code: string } }
 ) {
-  // Überprüfen, ob der Code genau 6 Zeichen lang ist und nur Hexadezimalzeichen enthält -> bereits im Frontend
-  // const codePattern = /^[0-9a-fA-F]{6}$/;
+  try {
+    const { code } = await params;
+    // Suche nach dem Gerät anhand des Hex-Codes und schließe die Mitarbeiterdaten ein
+    const device = await prisma.geraete.findUnique({
+      where: { code },
+      include: {
+        mitarbeiter: {
+          select: {
+            vorname: true,
+            nachname: true,
+          },
+        },
+      },
+    });
 
-  // if (!codePattern.test(params.code)) {
-  //   return NextResponse.json({ error: "Invalid hex code" }, { status: 400 });
-  // }
+    if (!device) {
+      return NextResponse.json({ error: "Device not found" }, { status: 404 });
+    }
 
-  // Suche nach dem Gerät anhand des Hex-Codes
-  const device = await prisma.geraete.findUnique({
-    where: { code: params.code },
-  });
+    // Transformiere die Daten, um nur die Attribute vorname und nachname einzuschließen
+    const response = {
+      ...device,
+      vorname: device.mitarbeiter?.vorname,
+      nachname: device.mitarbeiter?.nachname,
+      mitarbeiter: undefined,
+    };
 
-  if (!device) {
-    return NextResponse.json({ error: "Device not found" }, { status: 404 });
+    // Entferne das verschachtelte Mitarbeiter-Objekt
+    delete response.mitarbeiter;
+
+    console.log(response);
+
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("Fehler bei der Datenbankabfrage:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(device);
 }
