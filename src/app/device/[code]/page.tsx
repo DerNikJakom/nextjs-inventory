@@ -47,7 +47,7 @@ const DeviceDetailPage = ({
 
   const [expanded, setExpanded] = useState(false);
   const [device, setDevice] = useState({
-    mitarbeiterID: 0,
+    mitarbeiter_id: 0,
     vorname: "",
     nachname: "",
     name: "",
@@ -81,7 +81,7 @@ const DeviceDetailPage = ({
   }, [expanded]);
 
   const isAssigned = true; // Beispielhaftes Zuweisungsstatus
-  const userID = 1; // Beispielhafte Benutzer-ID
+  const userID = 2; // Beispielhafte Benutzer-ID
 
   const handleClick = useCallback(() => {
     // Beispielhafte Funktion für das Zuweisen/Entfernen
