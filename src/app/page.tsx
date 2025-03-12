@@ -40,10 +40,16 @@ export default function HomePage() {
         }}
       >
         <CardContent sx={{ textAlign: "center" }}>
-          <Typography variant="h3" color="text.primary" gutterBottom>
+          <Typography
+            variant="h3"
+            color="text.primary"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ pt: 2 }}
+          >
             Hallo {name}!
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography variant="h5" color="text.secondary" fontWeight="bold">
             Was möchtest du tun?
           </Typography>
         </CardContent>
