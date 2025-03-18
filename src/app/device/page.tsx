@@ -18,6 +18,7 @@ export default function DeviceInformation() {
 
   const [input, setInput] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +46,7 @@ export default function DeviceInformation() {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (isHexCode(input)) {
+        setLoading(true);
         try {
           const response = await fetch(`/api/device/${input.toUpperCase()}`);
 
@@ -144,6 +146,7 @@ export default function DeviceInformation() {
             onSubmit={handleSubmit}
           >
             <Button
+              loading={loading}
               id="submit-code"
               variant="contained"
               sx={{ backgroundColor: "primary.main", ml: 2 }}
