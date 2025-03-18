@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   Paper,
   Table,
@@ -36,10 +36,10 @@ interface Props {
   userID: string;
 }
 
-const InventoryTable: React.FC<Props> = ({ userID }) => {
+const InventoryTable: React.FC<Props> = () => {
   const router = useRouter();
 
-  const [rows, setRows] = useState<Row[]>([
+  const rows: Row[] = [
     {
       name: "Gerät 1",
       hersteller: "Hersteller 1",
@@ -52,7 +52,7 @@ const InventoryTable: React.FC<Props> = ({ userID }) => {
       modell: "Modell 2",
       code: "456456",
     },
-  ]);
+  ];
 
   const columns: Column[] = useMemo(
     () => [
