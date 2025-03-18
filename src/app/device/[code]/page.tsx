@@ -12,24 +12,21 @@ import {
   IconButton,
   styled,
   Box,
+  Theme,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/navigation";
 
 const ExpandMore = styled(
-  (props: {
-    expand: boolean;
-    children: React.ReactNode;
-    onClick: () => void;
-  }) => {
-    const { expand, children, onClick, ...other } = props;
+  (props: { children: React.ReactNode; onClick: () => void }) => {
+    const { children, onClick, ...other } = props;
     return (
       <IconButton {...other} onClick={onClick}>
         {children}
       </IconButton>
     );
   }
-)(({ theme, expand }: { theme: any; expand: boolean }) => ({
+)(({ theme, expand }: { theme: Theme; expand: boolean }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
   marginLeft: "auto",
   transition: theme.transitions.create("transform", {
@@ -69,8 +66,8 @@ const DeviceDetailPage = ({
         const response = await fetch(`/api/device/${code}`);
         const data = await response.json();
         setDevice(data);
-      } catch (error) {
-        console.error("Fehler bei der Überprüfung des Geräts");
+      } catch (err) {
+        console.error("Fehler bei der Überprüfung des Geräts:", err);
       }
     };
     fetchData();
