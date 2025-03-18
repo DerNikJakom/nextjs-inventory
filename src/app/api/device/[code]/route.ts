@@ -5,10 +5,14 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     const { code } = await params;
+    if (!code) {
+      return NextResponse.json("Code fehlt", { status: 400 });
+    }
+
     // Suche nach dem Gerät anhand des Hex-Codes und schließe die Mitarbeiterdaten ein
     const device = await prisma.geraete.findUnique({
       where: { code },
