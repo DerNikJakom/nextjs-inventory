@@ -5,33 +5,45 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "Credentials",
-
       credentials: {
         email: { label: "Email", type: "email", placeholder: "E-Mail" },
-        // username: { label: "Username", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL, {
-          method: "POST",
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" },
+      async authorize(credentials) {
+        const user = await prisma.mitarbeiter.findUnique({
+          where: { email: credentials.email },
         });
-        const user = await res.json();
 
-        // If no error and we have user data, return it
-        if (res.ok && user) {
+        if (user && user.passwort === credentials.password) {
           return user;
         }
-        // Return null if user data could not be retrieved
         return null;
       },
     }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
+  session: {
+    jwt: true,
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.id = token.id;
+      }
+      return session;
+    },
+  },
 };
+
 export default NextAuth(authOptions);
