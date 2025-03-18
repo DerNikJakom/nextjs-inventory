@@ -32,11 +32,7 @@ interface Row {
   code: string;
 }
 
-interface Props {
-  userID: string;
-}
-
-const InventoryTable: React.FC<Props> = () => {
+const InventoryTable = () => {
   const router = useRouter();
 
   const rows: Row[] = [
