@@ -56,7 +56,7 @@ export default function DeviceInformation() {
             setError("Gerät nicht gefunden");
           }
         } catch (error) {
-          setError("Fehler bei der Überprüfung des Geräts:", error);
+          setError("Fehler bei der Überprüfung des Geräts: " + error);
         }
       } else {
         setError("Ungültiger Code");
