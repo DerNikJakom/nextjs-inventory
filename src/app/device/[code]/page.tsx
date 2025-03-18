@@ -18,7 +18,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/navigation";
 
 const ExpandMore = styled(
-  (props: { children: React.ReactNode; onClick: () => void }) => {
+  (props: {
+    expand: boolean;
+    children: React.ReactNode;
+    onClick: () => void;
+  }) => {
     const { children, onClick, ...other } = props;
     return (
       <IconButton {...other} onClick={onClick}>
