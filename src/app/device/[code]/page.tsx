@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, use } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -13,6 +13,11 @@ import {
   styled,
   Box,
   Theme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/navigation";
@@ -44,9 +49,7 @@ const DeviceDetailPage = ({
   params: Promise<{ code: string }>;
 }) => {
   const router = useRouter();
-  const { code } = use(params);
-
-  const userID = 2; // Beispielhafte Benutzer-ID
+  const { code } = React.use(params);
 
   const [isAssigned, setAssigned] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -67,6 +70,9 @@ const DeviceDetailPage = ({
     bemerkungen: "",
   });
 
+  const [openDialog, setOpenDialog] = useState(false); // Zustand für das Dialogfenster
+  const [inputName, setInputName] = useState(""); // Zustand für den eingegebenen Namen
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,7 +80,6 @@ const DeviceDetailPage = ({
         const data = await response.json();
         setDevice(data);
         if (data.vorname) {
-          // Überprüfe, ob das Gerät einem Mitarbeiter zugewiesen ist
           setAssigned(true);
         } else {
           setAssigned(false);
@@ -90,10 +95,19 @@ const DeviceDetailPage = ({
     setExpanded(!expanded);
   }, [expanded]);
 
-  const handleClick = useCallback(() => {
-    // Beispielhafte Funktion für das Zuweisen/Entfernen
-    console.log("Gerät zugewiesen/entfernt");
+  const handleAssignThemClick = useCallback(() => {
+    setOpenDialog(true); // Öffne das Dialogfenster
   }, []);
+
+  const handleDialogClose = useCallback(() => {
+    setOpenDialog(false); // Schließe das Dialogfenster
+  }, []);
+
+  const handleDialogSubmit = useCallback(() => {
+    console.log("Eingegebener Name:", inputName);
+    // Hier kannst du die Logik für die Zuweisung implementieren
+    setOpenDialog(false); // Schließe das Dialogfenster
+  }, [inputName]);
 
   return (
     <Box
@@ -109,7 +123,7 @@ const DeviceDetailPage = ({
           borderRadius: 3,
           backgroundColor: "#F2F7F8",
           width: 400,
-          textAlign: "center", // Inhalte der Karte zentrieren
+          textAlign: "center",
         }}
       >
         <CardHeader
@@ -120,10 +134,7 @@ const DeviceDetailPage = ({
               : "nicht in Nutzung"
           }
         />
-        <CardActions
-          disableSpacing
-          sx={{ gap: 1 }} // Abstand zwischen den Buttons
-        >
+        <CardActions disableSpacing sx={{ gap: 1 }}>
           {isAssigned ? (
             <>
               <Button
@@ -136,7 +147,7 @@ const DeviceDetailPage = ({
 
               <Button
                 id="removeBtn"
-                onClick={handleClick}
+                onClick={() => console.log("Entfernen gedrückt")}
                 color="primary"
                 variant="outlined"
               >
@@ -154,7 +165,7 @@ const DeviceDetailPage = ({
               </Button>
               <Button
                 id="assignMeBtn"
-                onClick={handleClick}
+                onClick={() => console.log("Buchen gedrückt")}
                 variant="contained"
                 color="primary"
               >
@@ -162,7 +173,7 @@ const DeviceDetailPage = ({
               </Button>
               <Button
                 id="assignThemBtn"
-                onClick={handleClick}
+                onClick={handleAssignThemClick} // Öffne das Dialogfenster
                 variant="contained"
                 color="primary"
               >
@@ -223,6 +234,39 @@ const DeviceDetailPage = ({
           </CardContent>
         </Collapse>
       </Card>
+
+      {/* Dialog für die Eingabe des Namens */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Gerät einem Mitarbeiter zuweisen</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Name des Mitarbeiters"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={inputName}
+            onChange={(e) => setInputName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={handleDialogClose}
+            color="primary"
+          >
+            Abbrechen
+          </Button>
+          <Button
+            onClick={handleDialogSubmit}
+            color="primary"
+            variant="contained"
+          >
+            Zuweisen
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
