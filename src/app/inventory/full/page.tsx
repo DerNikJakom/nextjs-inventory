@@ -1,6 +1,6 @@
 "use client";
-
-import React, { useState, useMemo, useEffect } from "react";
+// TODO DB-Query für Vorname und Nachname des Benutzers
+import React, { useState, useMemo, useEffect, FC } from "react";
 import {
   Paper,
   Table,
@@ -15,40 +15,39 @@ import {
   Typography,
   Button,
   Box,
-  CircularProgress,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 interface Column {
-  id: "name" | "hersteller" | "modell" | "code";
+  id: "hersteller" | "modell" | "name" | "vorname" | "nachname" | "code";
   label: string;
   minWidth?: number;
   align?: "right";
 }
 
 interface Row {
-  name: string;
   hersteller: string;
   modell: string;
+  name: string;
+  vorname: string;
+  nachname: string;
   code: string;
 }
 
-const FullInventory: React.FC = () => {
+const FullInventory: FC = () => {
   const router = useRouter();
 
   const [rows, setRows] = useState<Row[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDevices = async () => {
       try {
         const response = await fetch("/api/device");
         const data = await response.json();
+        console.log("Gerätedaten:", data);
         setRows(data);
       } catch (error) {
         console.error("Fehler beim Abrufen der Gerätedaten:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -57,28 +56,15 @@ const FullInventory: React.FC = () => {
 
   const columns: Column[] = useMemo(
     () => [
-      { id: "name", label: "Name" },
       { id: "hersteller", label: "Hersteller" },
       { id: "modell", label: "Modell" },
+      { id: "name", label: "Name" },
+      { id: "vorname", label: "Vorname" },
+      { id: "nachname", label: "Nachname" },
       { id: "code", label: "Code" },
     ],
     []
   );
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Box

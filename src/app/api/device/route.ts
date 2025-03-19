@@ -17,15 +17,15 @@ export async function GET() {
       },
     });
 
-    // // Transformiere die Daten, um nur die Attribute vorname und nachname einzuschließen
-    // const response = devices.map((device) => ({
-    //   ...device,
-    //   vorname: device.mitarbeiter?.vorname ?? null,
-    //   nachname: device.mitarbeiter?.nachname ?? null,
-    //   mitarbeiter: undefined, // Entferne das verschachtelte Mitarbeiter-Objekt
-    // }));
+    // Transformiere die Daten, um die Mitarbeiterinformationen direkt in die Geräte einzubetten
+    const response = devices.map((device) => ({
+      ...device,
+      vorname: device.mitarbeiter?.vorname ?? null,
+      nachname: device.mitarbeiter?.nachname ?? null,
+      mitarbeiter: undefined, // Entferne das verschachtelte Mitarbeiter-Objekt
+    }));
 
-    return NextResponse.json(devices);
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Fehler bei der Datenbankabfrage:", error);
     return NextResponse.json(
