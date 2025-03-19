@@ -34,3 +34,37 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    // Parse den Request-Body
+    const body = await request.json();
+
+    // Füge das neue Gerät in die Datenbank ein
+    const newDevice = await prisma.geraete.create({
+      data: {
+        mitarbeiter_id: 0,
+        name: body.name,
+        hersteller: body.hersteller,
+        modell: body.modell,
+        produktnummer: body.produktnummer,
+        seriennummer: body.seriennummer,
+        code: body.code,
+        geraetetyp: body.geraetetyp,
+        anschaffungsdatum: body.anschaffungsdatum,
+        anschaffungskosten: body.anschaffungskosten,
+        standort: body.standort,
+        bemerkungen: body.bemerkungen,
+      },
+    });
+
+    // Rückgabe des neu erstellten Geräts
+    return NextResponse.json(newDevice, { status: 201 });
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen eines neuen Geräts:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Hinzufügen eines neuen Geräts" },
+      { status: 500 }
+    );
+  }
+}
