@@ -140,7 +140,7 @@ const DeviceDetailPage = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => router.push("/device")}
+                onClick={() => router.back()}
               >
                 Zurück
               </Button>
@@ -159,7 +159,7 @@ const DeviceDetailPage = ({
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => router.push("/device")}
+                onClick={() => router.back()}
               >
                 Zurück
               </Button>
