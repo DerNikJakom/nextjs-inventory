@@ -1,6 +1,6 @@
 "use client";
 // TODO DB-Query für Vorname und Nachname des Benutzers
-import React, { useState, useMemo, useEffect, FC } from "react";
+import React, { useState, useMemo, useEffect, FC, useCallback } from "react";
 import {
   Paper,
   Table,
@@ -15,6 +15,11 @@ import {
   Typography,
   Button,
   Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 
@@ -38,13 +43,40 @@ const FullInventory: FC = () => {
   const router = useRouter();
 
   const [rows, setRows] = useState<Row[]>([]);
+  const [openDialog, setOpenDialog] = useState(false); // Zustand für den Dialog
+  const [newDevice, setNewDevice] = useState<{
+    mitarbeiter_id: string;
+    name: string;
+    hersteller: string;
+    modell: string;
+    produktnummer: string;
+    seriennummer: string;
+    code: string;
+    geraetetyp: string;
+    anschaffungsdatum: string;
+    anschaffungskosten: string;
+    standort: string;
+    bemerkungen: string;
+  }>({
+    mitarbeiter_id: "",
+    name: "",
+    hersteller: "",
+    modell: "",
+    produktnummer: "",
+    seriennummer: "",
+    code: "",
+    geraetetyp: "",
+    anschaffungsdatum: "",
+    anschaffungskosten: "",
+    standort: "",
+    bemerkungen: "",
+  });
 
   useEffect(() => {
     const fetchDevices = async () => {
       try {
         const response = await fetch("/api/device");
         const data = await response.json();
-        console.log("Gerätedaten:", data);
         setRows(data);
       } catch (error) {
         console.error("Fehler beim Abrufen der Gerätedaten:", error);
@@ -65,6 +97,58 @@ const FullInventory: FC = () => {
     ],
     []
   );
+
+  const handleOpenDialog = useCallback(() => {
+    setOpenDialog(true); // Öffne den Dialog
+  }, []);
+
+  const handleCloseDialog = useCallback(() => {
+    setOpenDialog(false); // Schließe den Dialog
+  }, []);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setNewDevice((prev) => ({ ...prev, [name]: value }));
+    },
+    []
+  );
+
+  const handleSaveDevice = useCallback(async () => {
+    try {
+      const response = await fetch("/api/device", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newDevice),
+      });
+
+      if (response.ok) {
+        const savedDevice = await response.json();
+        setRows((prev) => [...prev, savedDevice]); // Füge das neue Gerät zur Tabelle hinzu
+        setOpenDialog(false); // Schließe den Dialog
+        setNewDevice({
+          mitarbeiter_id: "",
+          name: "",
+          hersteller: "",
+          modell: "",
+          produktnummer: "",
+          seriennummer: "",
+          code: "",
+          geraetetyp: "",
+          anschaffungsdatum: "",
+          anschaffungskosten: "",
+          standort: "",
+          bemerkungen: "",
+        });
+      } else {
+        console.error("Fehler beim Speichern des Geräts:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Fehler beim Speichern des Geräts:", error);
+    }
+  }, [newDevice]);
 
   return (
     <Box
@@ -145,17 +229,61 @@ const FullInventory: FC = () => {
               </Table>
             </TableContainer>
           </Paper>
-          <CardActions sx={{ justifyContent: "center", mt: 2 }}>
+          <CardActions sx={{ justifyContent: "center", mt: 2, gap: 1 }}>
             <Button
               variant="contained"
-              sx={{ backgroundColor: "primary.main" }}
+              color="primary"
+              sx={{ width: 100 }}
               onClick={() => router.push("/")}
             >
               Zurück
             </Button>
+            <Button
+              variant="outlined"
+              sx={{ width: 100 }}
+              color="primary"
+              onClick={handleOpenDialog} // Öffne den Dialog
+            >
+              Neu
+            </Button>
           </CardActions>
         </CardContent>
       </Card>
+
+      {/* Dialog für neues Gerät */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Neues Gerät hinzufügen</DialogTitle>
+        <DialogContent>
+          {Object.keys(newDevice).map((key) => (
+            <TextField
+              key={key}
+              margin="dense"
+              label={key}
+              name={key}
+              fullWidth
+              variant="outlined"
+              value={newDevice[key as keyof typeof newDevice]}
+              onChange={handleInputChange}
+            />
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDialog}
+            color="primary"
+            variant="outlined"
+          >
+            Abbrechen
+          </Button>
+          <Button
+            onClick={handleSaveDevice}
+            color="primary"
+            variant="contained"
+          >
+            Speichern
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
