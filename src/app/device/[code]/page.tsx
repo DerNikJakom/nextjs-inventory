@@ -46,6 +46,9 @@ const DeviceDetailPage = ({
   const router = useRouter();
   const { code } = use(params);
 
+  const userID = 2; // Beispielhafte Benutzer-ID
+
+  const [isAssigned, setAssigned] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [device, setDevice] = useState({
     mitarbeiter_id: 0,
@@ -70,6 +73,12 @@ const DeviceDetailPage = ({
         const response = await fetch(`/api/device/${code}`);
         const data = await response.json();
         setDevice(data);
+        if (data.vorname) {
+          // Überprüfe, ob das Gerät einem Mitarbeiter zugewiesen ist
+          setAssigned(true);
+        } else {
+          setAssigned(false);
+        }
       } catch (err) {
         console.error("Fehler bei der Überprüfung des Geräts:", err);
       }
@@ -80,9 +89,6 @@ const DeviceDetailPage = ({
   const handleExpandClick = useCallback(() => {
     setExpanded(!expanded);
   }, [expanded]);
-
-  const isAssigned = true; // Beispielhaftes Zuweisungsstatus
-  const userID = 2; // Beispielhafte Benutzer-ID
 
   const handleClick = useCallback(() => {
     // Beispielhafte Funktion für das Zuweisen/Entfernen
@@ -127,35 +133,40 @@ const DeviceDetailPage = ({
               >
                 Zurück
               </Button>
-              {userID === device.mitarbeiter_id && (
-                <Button
-                  id="removeBtn"
-                  onClick={handleClick}
-                  color="primary"
-                  variant="outlined"
-                >
-                  Entfernen
-                </Button>
-              )}
+
+              <Button
+                id="removeBtn"
+                onClick={handleClick}
+                color="primary"
+                variant="outlined"
+              >
+                Entfernen
+              </Button>
             </>
           ) : (
             <>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => {
-                  console.log("Zurück");
-                }}
+                onClick={() => router.push("/device")}
               >
                 Zurück
               </Button>
               <Button
-                id="assignBtn"
+                id="assignMeBtn"
                 onClick={handleClick}
                 variant="contained"
                 color="primary"
               >
                 Buchen
+              </Button>
+              <Button
+                id="assignThemBtn"
+                onClick={handleClick}
+                variant="contained"
+                color="primary"
+              >
+                Zuweisen
               </Button>
             </>
           )}
