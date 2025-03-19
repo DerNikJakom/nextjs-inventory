@@ -45,7 +45,6 @@ const FullInventory: FC = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [openDialog, setOpenDialog] = useState(false); // Zustand für den Dialog
   const [newDevice, setNewDevice] = useState<{
-    mitarbeiter_id: string;
     name: string;
     hersteller: string;
     modell: string;
@@ -58,7 +57,6 @@ const FullInventory: FC = () => {
     standort: string;
     bemerkungen: string;
   }>({
-    mitarbeiter_id: "",
     name: "",
     hersteller: "",
     modell: "",
@@ -123,13 +121,13 @@ const FullInventory: FC = () => {
         },
         body: JSON.stringify(newDevice),
       });
+      const data = await response.json();
+      console.log(data);
 
       if (response.ok) {
-        const savedDevice = await response.json();
-        setRows((prev) => [...prev, savedDevice]); // Füge das neue Gerät zur Tabelle hinzu
+        setRows((prev) => [...prev, data]); // Füge das neue Gerät zur Tabelle hinzu
         setOpenDialog(false); // Schließe den Dialog
         setNewDevice({
-          mitarbeiter_id: "",
           name: "",
           hersteller: "",
           modell: "",
