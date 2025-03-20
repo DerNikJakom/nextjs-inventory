@@ -88,12 +88,12 @@ const FullInventory: FC = () => {
 
   const columns: Column[] = useMemo(
     () => [
-      { id: "hersteller", label: "Hersteller" },
-      { id: "modell", label: "Modell" },
-      { id: "name", label: "Name" },
-      { id: "vorname", label: "Vorname" },
-      { id: "nachname", label: "Nachname" },
-      { id: "code", label: "Code" },
+      { id: "hersteller", label: "Hersteller", minWidth: 150 },
+      { id: "modell", label: "Modell", minWidth: 150 },
+      { id: "name", label: "Name", minWidth: 150 },
+      { id: "vorname", label: "Vorname", minWidth: 120 },
+      { id: "nachname", label: "Nachname", minWidth: 120 },
+      { id: "code", label: "Code", minWidth: 100 },
     ],
     []
   );
@@ -263,21 +263,28 @@ const FullInventory: FC = () => {
                         );
                       })}
                       <TableCell align="center">
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => router.push(`/device/${row.code}`)}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: 1,
+                          }}
                         >
-                          Details
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={() => handleEditClick(row)} // Öffne den Edit-Dialog
-                          sx={{ ml: 1 }}
-                        >
-                          Edit
-                        </Button>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => router.push(`/device/${row.code}`)}
+                          >
+                            Details
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={() => handleEditClick(row)} // Öffne den Edit-Dialog
+                          >
+                            Edit
+                          </Button>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
