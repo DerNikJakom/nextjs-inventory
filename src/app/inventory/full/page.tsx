@@ -1,5 +1,5 @@
 "use client";
-// TODO DB-Query für Vorname und Nachname des Benutzers
+
 import React, { useState, useMemo, useEffect, FC, useCallback } from "react";
 import {
   Paper,
@@ -43,7 +43,8 @@ const FullInventory: FC = () => {
   const router = useRouter();
 
   const [rows, setRows] = useState<Row[]>([]);
-  const [openDialog, setOpenDialog] = useState(false); // Zustand für den Dialog
+  const [openDialog, setOpenDialog] = useState(false); // Zustand für den "Neu"-Dialog
+  const [openEditDialog, setOpenEditDialog] = useState(false); // Zustand für den "Edit"-Dialog
   const [newDevice, setNewDevice] = useState<{
     name: string;
     hersteller: string;
@@ -69,6 +70,7 @@ const FullInventory: FC = () => {
     standort: "",
     bemerkungen: "",
   });
+  const [selectedDevice, setSelectedDevice] = useState<Row | null>(null); // Das ausgewählte Gerät
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -97,11 +99,11 @@ const FullInventory: FC = () => {
   );
 
   const handleOpenDialog = useCallback(() => {
-    setOpenDialog(true); // Öffne den Dialog
+    setOpenDialog(true); // Öffne den "Neu"-Dialog
   }, []);
 
   const handleCloseDialog = useCallback(() => {
-    setOpenDialog(false); // Schließe den Dialog
+    setOpenDialog(false); // Schließe den "Neu"-Dialog
   }, []);
 
   const handleInputChange = useCallback(
@@ -122,7 +124,6 @@ const FullInventory: FC = () => {
         body: JSON.stringify(newDevice),
       });
       const data = await response.json();
-      console.log(data);
 
       if (response.ok) {
         setRows((prev) => [...prev, data]); // Füge das neue Gerät zur Tabelle hinzu
@@ -147,6 +148,55 @@ const FullInventory: FC = () => {
       console.error("Fehler beim Speichern des Geräts:", error);
     }
   }, [newDevice]);
+
+  const handleEditClick = useCallback((device: Row) => {
+    setSelectedDevice(device); // Setze das ausgewählte Gerät
+    setOpenEditDialog(true); // Öffne den "Edit"-Dialog
+  }, []);
+
+  const handleEditDialogClose = useCallback(() => {
+    setOpenEditDialog(false); // Schließe den "Edit"-Dialog
+    setSelectedDevice(null); // Zurücksetzen des ausgewählten Geräts
+  }, []);
+
+  const handleEditSave = useCallback(async () => {
+    if (!selectedDevice) return;
+
+    try {
+      const response = await fetch(`/api/device/${selectedDevice.code}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedDevice),
+      });
+
+      if (response.ok) {
+        // Lade die aktualisierten Daten erneut von der API
+        const updatedResponse = await fetch("/api/device");
+        const updatedData = await updatedResponse.json();
+
+        setRows(updatedData); // Aktualisiere die Tabelle mit den neuen Daten
+        setOpenEditDialog(false); // Schließe den Dialog
+        setSelectedDevice(null); // Zurücksetzen des ausgewählten Geräts
+      } else {
+        console.error(
+          "Fehler beim Aktualisieren des Geräts:",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("Fehler beim Aktualisieren des Geräts:", error);
+    }
+  }, [selectedDevice]);
+
+  const handleEditInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setSelectedDevice((prev) => (prev ? { ...prev, [name]: value } : prev));
+    },
+    []
+  );
 
   return (
     <Box
@@ -220,6 +270,14 @@ const FullInventory: FC = () => {
                         >
                           Details
                         </Button>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => handleEditClick(row)} // Öffne den Edit-Dialog
+                          sx={{ ml: 1 }}
+                        >
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -278,6 +336,45 @@ const FullInventory: FC = () => {
             color="primary"
             variant="contained"
           >
+            Speichern
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog für Bearbeiten */}
+      <Dialog open={openEditDialog} onClose={handleEditDialogClose}>
+        <DialogTitle>Gerät bearbeiten</DialogTitle>
+        <DialogContent>
+          {selectedDevice &&
+            Object.keys(selectedDevice)
+              .filter(
+                (key) =>
+                  key !== "vorname" &&
+                  key !== "nachname" &&
+                  key !== "mitarbeiter_id"
+              ) // Felder ausschließen
+              .map((key) => (
+                <TextField
+                  key={key}
+                  margin="dense"
+                  label={key}
+                  name={key}
+                  fullWidth
+                  variant="outlined"
+                  value={selectedDevice[key as keyof Row] ?? ""} // Fallback auf leeren String
+                  onChange={handleEditInputChange}
+                />
+              ))}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleEditDialogClose}
+            color="primary"
+            variant="outlined"
+          >
+            Abbrechen
+          </Button>
+          <Button onClick={handleEditSave} color="primary" variant="contained">
             Speichern
           </Button>
         </DialogActions>

@@ -52,3 +52,44 @@ export async function GET(
     );
   }
 }
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ code: string }> }
+) {
+  try {
+    const { code } = await params;
+    if (!code) {
+      return NextResponse.json({ error: "Code fehlt" }, { status: 400 });
+    }
+
+    // Parse den Request-Body
+    const body = await request.json();
+
+    // Aktualisiere das Gerät in der Datenbank
+    const updatedDevice = await prisma.geraete.update({
+      where: { code },
+      data: {
+        name: body.name,
+        hersteller: body.hersteller,
+        modell: body.modell,
+        produktnummer: body.produktnummer,
+        seriennummer: body.seriennummer,
+        geraetetyp: body.geraetetyp,
+        anschaffungsdatum: body.anschaffungsdatum,
+        anschaffungskosten: body.anschaffungskosten,
+        standort: body.standort,
+        bemerkungen: body.bemerkungen,
+      },
+    });
+
+    // Rückgabe des aktualisierten Geräts
+    return NextResponse.json(updatedDevice, { status: 200 });
+  } catch (error) {
+    console.error("Fehler beim Aktualisieren des Geräts:", error);
+    return NextResponse.json(
+      { error: "Fehler beim Aktualisieren des Geräts" },
+      { status: 500 }
+    );
+  }
+}
