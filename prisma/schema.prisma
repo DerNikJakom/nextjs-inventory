@@ -24,12 +24,12 @@ model geraete {
 }
 
 model mitarbeiter {
-  id       Int       @id(map: "mitarbeiter_pk") @default(autoincrement())
-  vorname  String?   @db.VarChar(50)
-  nachname String?   @db.VarChar(50)
-  email    String?   @unique(map: "unique_email") @db.VarChar(50)
-  passwort String?   @db.VarChar(100)
-  salt     String?   @db.VarChar(100)
-  rolle    String?   @db.VarChar(50)
-  geraete  geraete[]
+  id        Int       @id(map: "mitarbeiter_pk") @default(autoincrement())
+  vorname   String?   @db.VarChar(50)
+  nachname  String?   @db.VarChar(50)
+  email     String?   @unique(map: "unique_email") @db.VarChar(50)
+  passwort  String?   @db.VarChar(100)
+  rolle     String?   @db.VarChar(50)
+  createdat DateTime  @default(now()) @db.Timestamp(6)
+  geraete   geraete[]
 }
